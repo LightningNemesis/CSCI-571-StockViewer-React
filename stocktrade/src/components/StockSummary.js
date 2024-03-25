@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 function StockSummary({ companyDescription, stockData }) {
   return (
     <div>
-      Stock Summay tab:
-      <div>{companyDescription?.name}</div>
-      <div>c:{stockData?.c}</div>
-      <div>dp:{stockData?.dp}</div>
+      <h1>Stock Summary</h1>
+      <div>High Price: {stockData.h}</div>
+      <div>Low Price: {stockData.l}</div>
+      <div>Open Price: {stockData.o}</div>
+      <div>prev. Close: {stockData.pc}</div>
     </div>
   );
 }

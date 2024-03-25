@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 import NavBar from "./components/NavBar";
 import SearchBar from "./components/SearchBar";
-import StockSummary from "./components/StockSummary";
+import TabView from "./components/TabView";
 import FooterBar from "./components/Footer";
 
 import {
@@ -41,8 +42,9 @@ function App() {
     <div>
       {/* <NavBar /> */}
       <SearchBar onSubmit={handleSubmit} />
+
       {companyDescription != null && companyHistorical != null && (
-        <StockSummary
+        <TabView
           companyDescription={companyDescription}
           stockData={stockData}
         />
