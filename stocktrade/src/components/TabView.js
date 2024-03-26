@@ -34,7 +34,7 @@ const UpperSection = ({ companyDescription, stockData }) => {
   );
 };
 
-function TabView({ companyDescription, stockData }) {
+function TabView({ companyDescription, stockData, peersData, newsData }) {
   const [activeTab, setActiveTab] = useState("summary");
   return (
     <div>
@@ -47,15 +47,17 @@ function TabView({ companyDescription, stockData }) {
         activeKey={activeTab}
         onSelect={(k) => setActiveTab(k)}
         className="mb-3"
+        fill
       >
         <Tab eventKey="summary" title="Summary">
           <StockSummary
             companyDescription={companyDescription}
             stockData={stockData}
+            peersData={peersData}
           />
         </Tab>
         <Tab eventKey="topNews" title="Top News">
-          <TopNews />
+          <TopNews newsData={newsData} />
         </Tab>
         <Tab eventKey="charts" title="Charts">
           <Charts />

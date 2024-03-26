@@ -40,6 +40,16 @@ const getCompanyNews = async (query) => {
   return response.data;
 };
 
+const getCompanyPeers = async (query) => {
+  const response = await axios.get(`https://finnhub.io/api/v1/stock/peers`, {
+    params: {
+      symbol: query,
+      token: "cn2vjohr01qt9t7visi0cn2vjohr01qt9t7visig",
+    },
+  });
+
+  return response.data;
+};
 /*
   Polygon API call: returns timeseries data for a given stock symbol
 */
@@ -58,4 +68,10 @@ const getCompanyHistorical = async (query) => {
   return response.data;
 };
 
-export { getCompanyTab, getStockSummary, getCompanyNews, getCompanyHistorical };
+export {
+  getCompanyTab,
+  getStockSummary,
+  getCompanyNews,
+  getCompanyHistorical,
+  getCompanyPeers,
+};

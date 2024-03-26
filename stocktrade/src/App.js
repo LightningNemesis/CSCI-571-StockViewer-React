@@ -8,6 +8,7 @@ import FooterBar from "./components/Footer";
 
 import {
   getCompanyTab,
+  getCompanyPeers,
   getCompanyHistorical,
   getCompanyNews,
   getStockSummary,
@@ -15,6 +16,7 @@ import {
 
 function App() {
   const [companyDescription, setCompanyDescription] = useState(null);
+  const [companyPeers, setCompanyPeers] = useState([]);
   const [stockData, setStockData] = useState(null);
   const [companyHistorical, setCompanyHistorical] = useState(null);
   const [companyNews, setCompanyNews] = useState([]);
@@ -28,11 +30,13 @@ function App() {
 
   const handleSubmit = async (term) => {
     const compDescRes = await getCompanyTab(term);
+    const compPeers = await getCompanyPeers(term);
     const StockData = await getStockSummary(term);
     const compHistRes = await getCompanyHistorical(term);
     const compNews = await getCompanyNews(term);
 
     setCompanyDescription(compDescRes);
+    setCompanyPeers(compPeers);
     setCompanyHistorical(compHistRes);
     setCompanyNews(compNews);
     setStockData(StockData);
@@ -47,6 +51,8 @@ function App() {
         <TabView
           companyDescription={companyDescription}
           stockData={stockData}
+          peersData={companyPeers}
+          newsData={companyNews}
         />
       )}
       {/* <FooterBar /> */}
