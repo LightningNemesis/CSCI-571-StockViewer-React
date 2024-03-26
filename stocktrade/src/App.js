@@ -53,6 +53,7 @@ function App() {
           stockData={stockData}
           peersData={companyPeers}
           newsData={companyNews}
+          companyHistorical={companyHistorical}
         />
       )}
       {/* <FooterBar /> */}

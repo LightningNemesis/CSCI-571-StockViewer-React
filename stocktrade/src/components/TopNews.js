@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Card, Modal } from "react-bootstrap";
 
+import xLogo from "../assets/X_logo.svg";
+import fbLogo from "../assets/fb_logo.jpeg";
+
 const RenderedRows = ({ newsItems }) => {
   const [showModal, setShowModal] = useState(false);
   const [modalContent, setModalContent] = useState({});
@@ -12,6 +15,20 @@ const RenderedRows = ({ newsItems }) => {
 
   // Function to handle closing the modal
   const handleClose = () => setShowModal(false);
+
+  const shareOnTwitter = (text, url) => {
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      text
+    )}&url=${encodeURIComponent(url)}`;
+    window.open(twitterUrl, "_blank");
+  };
+
+  const shareOnFacebook = (imageUrl) => {
+    const facebookShareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+      imageUrl
+    )}`;
+    window.open(facebookShareUrl, "_blank");
+  };
 
   return (
     <>
@@ -45,19 +62,42 @@ const RenderedRows = ({ newsItems }) => {
       {/* Modal component */}
       <Modal show={showModal} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>{modalContent.headline}</Modal.Title>
+          <Modal.Title>
+            {modalContent.source}
+            <br />
+            <p style={{ fontSize: 15 }}>{modalContent.datetime}</p>
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <img
-            src={modalContent.image}
-            alt="Modal visual content"
-            style={{ width: "100%" }}
-          />
-          {/* You can add more content here such as the article text or other details */}
+          <p>{modalContent.summary}</p>
+          <p>
+            For more details click{" "}
+            <a
+              href={modalContent.url}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              here.
+            </a>
+          </p>
+          <div style={styles.modalFooter}>
+            <p>Share</p>
+            <img
+              style={{ ...styles.modalFooterIcons, marginRight: "10px" }}
+              src={xLogo}
+              alt="share on twitter"
+              onClick={() =>
+                shareOnTwitter(modalContent.headline, modalContent.url)
+              }
+            />
+            <img
+              style={styles.modalFooterIcons}
+              src={fbLogo}
+              alt="share on facebook"
+              onClick={() => shareOnFacebook(modalContent.image)}
+            />
+          </div>
         </Modal.Body>
-        <Modal.Footer>
-          <button onClick={handleClose}>Close</button>
-        </Modal.Footer>
       </Modal>
     </>
   );
@@ -90,4 +130,11 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
   },
+  modalFooter: {
+    padding: "10px",
+    borderRadius: "5px",
+    borderColor: "lightgray",
+    borderStyle: "solid",
+  },
+  modalFooterIcons: { height: "25px", width: "25px" },
 };

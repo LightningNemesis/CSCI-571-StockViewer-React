@@ -54,8 +54,8 @@ const getCompanyPeers = async (query) => {
   Polygon API call: returns timeseries data for a given stock symbol
 */
 const getCompanyHistorical = async (query) => {
-  let fromDate = "2021-08-09";
-  let toDate = "2024-02-09";
+  let fromDate = "2022-03-25";
+  let toDate = "2024-03-25";
   const response = await axios.get(
     `https://api.polygon.io/v2/aggs/ticker/${query}/range/1/day/${fromDate}/${toDate}?adjusted=true&sort=asc`,
     {

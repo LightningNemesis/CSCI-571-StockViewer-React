@@ -1,69 +1,136 @@
+import { useEffect, useState } from "react";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 require("highcharts/modules/stock")(Highcharts);
+// require("highcharts/indicators/indicators")(Highcharts);
+// require("highcharts/indicators/volume-by-price")(Highcharts); // Import VBP
+// require("highcharts/indicators/sma")(Highcharts); // Import SMA if you haven't
+require("highcharts/indicators/indicators-all")(Highcharts);
 
-const ohlcData = [
-  [Date.UTC(2023, 4, 1), 170.0, 180.3, 169.7, 178.5], // [timestamp, open, high, low, close]
-  [Date.UTC(2023, 4, 2), 178.5, 179.5, 176.4, 177.6],
-  [Date.UTC(2023, 4, 3), 177.6, 180.0, 177.0, 179.4],
-  [Date.UTC(2023, 4, 4), 179.4, 181.1, 178.4, 180.0],
-  [Date.UTC(2023, 4, 5), 180.0, 183.2, 179.1, 182.3],
-  // Add more data points as needed
-];
+function Charts({ historicalData }) {
+  const [ohlcData, setOhlcData] = useState([]);
+  const [volumeData, setVolumeData] = useState([]);
 
-// Dummy data for the volume series
-const volumeData = [
-  [Date.UTC(2023, 4, 1), 403142390], // [timestamp, volume]
-  [Date.UTC(2023, 4, 2), 358123200],
-  [Date.UTC(2023, 4, 3), 371233490],
-  [Date.UTC(2023, 4, 4), 312123490],
-  [Date.UTC(2023, 4, 5), 411123490],
-  // Add more data points as needed
-];
+  useEffect(() => {
+    const ohlc = [];
+    const volume = [];
 
-const options = {
-  chart: {
-    type: "column", // For the volume bars
-  },
-  title: {
-    text: "AAPL Historical",
-  },
-  yAxis: [
-    {
-      // Primary yAxis for the OHLC
-      title: {
-        text: "OHLC",
+    historicalData.results.forEach((item) => {
+      ohlc.push([item.t, item.o, item.h, item.l, item.c]);
+      volume.push([item.t, item.v]);
+    });
+
+    setOhlcData(ohlc);
+    setVolumeData(volume);
+  }, [historicalData]);
+
+  const groupingUnits = [
+    [
+      "week", // unit name
+      [1], // allowed multiples
+    ],
+    ["month", [1, 2, 3, 4, 6]],
+  ];
+
+  const options = {
+    rangeSelector: {
+      enabled: true,
+      selected: 2,
+    },
+    navigator: {
+      enabled: true, // Make sure the navigator is enabled
+    },
+
+    title: {
+      text: "AAPL Historical",
+    },
+
+    subtitle: {
+      text: "With SMA and Volume by Price technical indicators",
+    },
+
+    yAxis: [
+      {
+        startOnTick: false,
+        endOnTick: false,
+        labels: {
+          align: "right",
+          x: -3,
+        },
+        title: {
+          text: "OHLC",
+        },
+        height: "60%",
+        lineWidth: 2,
+        resize: {
+          enabled: true,
+        },
       },
-      height: "60%", // Adjust as needed
-    },
-    {
-      // Secondary yAxis for the Volume
-      title: {
-        text: "Volume",
+      {
+        labels: {
+          align: "right",
+          x: -3,
+        },
+        title: {
+          text: "Volume",
+        },
+        top: "65%",
+        height: "35%",
+        offset: 0,
+        lineWidth: 2,
       },
-      top: "65%",
-      height: "35%",
-      offset: 0,
+    ],
+    tooltip: {
+      split: true,
     },
-  ],
-  series: [
-    {
-      name: "AAPL",
-      type: "candlestick",
-      data: ohlcData,
-    },
-    {
-      name: "Volume",
-      type: "column",
-      data: volumeData,
-      yAxis: 1,
-    },
-  ],
-  // Add other necessary options
-};
 
-function Charts() {
+    plotOptions: {
+      series: {
+        dataGrouping: {
+          units: groupingUnits,
+        },
+      },
+    },
+
+    series: [
+      {
+        type: "candlestick",
+        name: "AAPL",
+        id: "aapl",
+        zIndex: 2,
+        data: ohlcData,
+      },
+      {
+        type: "column",
+        name: "Volume",
+        id: "volume",
+        data: volumeData,
+        yAxis: 1,
+      },
+      {
+        type: "vbp",
+        linkedTo: "aapl",
+        params: {
+          volumeSeriesID: "volume",
+        },
+        dataLabels: {
+          enabled: false,
+        },
+        zoneLines: {
+          enabled: false,
+        },
+      },
+      {
+        type: "sma",
+        linkedTo: "aapl",
+        zIndex: 1,
+        marker: {
+          enabled: false,
+        },
+      },
+    ],
+  };
   return (
     <div>
       <HighchartsReact highcharts={Highcharts} options={options} />
