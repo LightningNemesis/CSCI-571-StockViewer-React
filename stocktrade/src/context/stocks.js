@@ -11,7 +11,8 @@ function Provider({ children }) {
   const [companyNews, setCompanyNews] = useState([]);
 
   const [watchlist, setWatchlist] = useState([]);
-  const [portfolio, setPortfolip] = useState([]);
+  const [wallet, setWallet] = useState(0);
+  const [portfolio, setPortfolio] = useState([]);
 
   // --------------------------------------------------------------
   // Search section
@@ -117,10 +118,19 @@ function Provider({ children }) {
   // Portfolio section
   // --------------------------------------------------------------
 
+  // Get wallet amount
+  const fetchWallet = useCallback(async (query) => {
+    const response = await axios.get("http://localhost:3001/wallet");
+
+    console.log(response.data.amount);
+    setWallet(parseInt(response.data.amount));
+  }, []);
+
   // Get all stocks stored in DB ~ part of the Portfolio
   const fetchPortfolio = useCallback(async () => {
-    // const response = await axios.get("http://localhost:3001/books");
-    // setBooks(response.data);
+    const response = await axios.get("http://localhost:3001/portfolio");
+    console.log(response.data);
+    setPortfolio(response.data);
   }, []);
 
   // Adding stocks to the watchlist
@@ -162,6 +172,10 @@ function Provider({ children }) {
     fetchWatchlist,
     createWatchlist,
     deleteWatchlistById,
+
+    wallet,
+    fetchWallet,
+
     portfolio,
     fetchPortfolio,
     buyStocks,

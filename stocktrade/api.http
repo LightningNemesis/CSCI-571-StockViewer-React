@@ -23,3 +23,29 @@ Content-Type: application/json
 
 DELETE http://localhost:3001/watchlist/1 HTTP/1.1
 Content-Type: application/json
+
+###
+
+GET http://localhost:3001/wallet HTTP/1.1
+Content-Type: application/json
+
+###
+
+GET http://localhost:3001/portfolio HTTP/1.1
+Content-Type: application/json
+
+###
+
+POST http://localhost:3001/portfolio HTTP/1.1
+Content-Type: application/json
+
+{
+    "symbol": "AAPL",
+    "name": "Apple Inc",
+    "quantity": 3,
+    "avgCost": 184.23,
+    "totalCost": 552.69,
+    "change": -0.06,
+    "currentPrice": 184.18,
+    "marketValue": 552.53
+}

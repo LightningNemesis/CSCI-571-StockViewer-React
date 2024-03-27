@@ -1,9 +1,35 @@
 {
+  "wallet": {
+    "amount": "25000000"
+  },
   "watchlist": [
     {
       "symbol": "AAPL",
       "id": 2
     }
   ],
-  "portfolio": []
+  "portfolio": [
+    {
+      "symbol": "AAPL",
+      "name": "Apple Inc",
+      "quantity": 3,
+      "avgCost": 184.23,
+      "totalCost": 552.69,
+      "change": -0.06,
+      "currentPrice": 184.18,
+      "marketValue": 552.53,
+      "id": 1
+    },
+    {
+      "symbol": "AAPL",
+      "name": "Apple Inc",
+      "quantity": 3,
+      "avgCost": 184.23,
+      "totalCost": 552.69,
+      "change": -0.06,
+      "currentPrice": 184.18,
+      "marketValue": 552.53,
+      "id": 2
+    }
+  ]
 }
