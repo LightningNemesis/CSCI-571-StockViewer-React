@@ -1,49 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 import SearchBar from "../components/SearchBar";
 import TabView from "../components/TabView";
 
-import {
-  getCompanyTab,
-  getCompanyPeers,
-  getCompanyHistorical,
-  getCompanyNews,
-  getStockSummary,
-} from "../api";
+import StocksContext from "../context/stocks";
 
 function Search() {
-  const [companyDescription, setCompanyDescription] = useState(null);
-  const [companyPeers, setCompanyPeers] = useState([]);
-  const [stockData, setStockData] = useState(null);
-  const [companyHistorical, setCompanyHistorical] = useState(null);
-  const [companyNews, setCompanyNews] = useState([]);
+  const {
+    companyDescription,
+    companyPeers,
+    stockData,
+    companyHistorical,
+    companyNews,
+
+    getCompanyTab,
+    getCompanyPeers,
+    getStockSummary,
+    getCompanyHistorical,
+    getCompanyNews,
+  } = useContext(StocksContext);
 
   const handleSubmit = async (term) => {
-    const compDescRes = await getCompanyTab(term);
-    const compPeers = await getCompanyPeers(term);
-    const StockData = await getStockSummary(term);
-    const compHistRes = await getCompanyHistorical(term);
-    const compNews = await getCompanyNews(term);
-
-    setCompanyDescription(compDescRes);
-    setCompanyPeers(compPeers);
-    setCompanyHistorical(compHistRes);
-    setCompanyNews(compNews);
-    setStockData(StockData);
+    getCompanyTab(term);
+    getCompanyPeers(term);
+    getStockSummary(term);
+    getCompanyHistorical(term);
+    getCompanyNews(term);
   };
+
+  useEffect(() => {}, [
+    companyDescription,
+    companyHistorical,
+    companyNews,
+    stockData,
+  ]);
 
   return (
     <div>
       <SearchBar onSubmit={handleSubmit} />
-      {companyDescription != null && companyHistorical != null && (
-        <TabView
-          companyDescription={companyDescription}
-          stockData={stockData}
-          peersData={companyPeers}
-          newsData={companyNews}
-          companyHistorical={companyHistorical}
-        />
-      )}
+      {companyDescription != null &&
+        companyHistorical != null &&
+        companyPeers != null &&
+        stockData != null &&
+        companyNews != null && (
+          <TabView
+            companyDescription={companyDescription}
+            stockData={stockData}
+            peersData={companyPeers}
+            newsData={companyNews}
+            companyHistorical={companyHistorical}
+          />
+        )}
     </div>
   );
 }
