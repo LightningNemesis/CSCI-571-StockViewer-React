@@ -1,61 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import Nav from "react-bootstrap/Nav";
+import Navbar from "react-bootstrap/Navbar";
 
-import NavBar from "./components/NavBar";
-import SearchBar from "./components/SearchBar";
-import TabView from "./components/TabView";
+import Search from "./pages/Search";
+import Portfolio from "./pages/Portfolio";
+import Watchlist from "./pages/Watchlist";
+
 import FooterBar from "./components/Footer";
-
-import {
-  getCompanyTab,
-  getCompanyPeers,
-  getCompanyHistorical,
-  getCompanyNews,
-  getStockSummary,
-} from "./api";
+import StocksContext from "./context/stocks";
 
 function App() {
-  const [companyDescription, setCompanyDescription] = useState(null);
-  const [companyPeers, setCompanyPeers] = useState([]);
-  const [stockData, setStockData] = useState(null);
-  const [companyHistorical, setCompanyHistorical] = useState(null);
-  const [companyNews, setCompanyNews] = useState([]);
-
-  useEffect(() => {
-    console.log("companyDescription", companyDescription);
-    console.log("companyHistorical", companyHistorical);
-    console.log("companyNews", companyNews);
-    console.log("stockData", stockData);
-  }, [companyDescription, companyHistorical, companyNews, stockData]);
-
-  const handleSubmit = async (term) => {
-    const compDescRes = await getCompanyTab(term);
-    const compPeers = await getCompanyPeers(term);
-    const StockData = await getStockSummary(term);
-    const compHistRes = await getCompanyHistorical(term);
-    const compNews = await getCompanyNews(term);
-
-    setCompanyDescription(compDescRes);
-    setCompanyPeers(compPeers);
-    setCompanyHistorical(compHistRes);
-    setCompanyNews(compNews);
-    setStockData(StockData);
-  };
-
   return (
     <div>
-      {/* <NavBar /> */}
-      <SearchBar onSubmit={handleSubmit} />
+      <BrowserRouter>
+        <Navbar expand="lg" className="bg-body-tertiary">
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              <Nav.Item>
+                <Link className="nav-link" to="/">
+                  Search
+                </Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Link className="nav-link" to="/watchlist">
+                  Watchlist
+                </Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Link className="nav-link" to="/portfolio">
+                  Portfolio
+                </Link>
+              </Nav.Item>
+            </Nav>
+          </Navbar.Collapse>
+        </Navbar>
 
-      {companyDescription != null && companyHistorical != null && (
-        <TabView
-          companyDescription={companyDescription}
-          stockData={stockData}
-          peersData={companyPeers}
-          newsData={companyNews}
-          companyHistorical={companyHistorical}
-        />
-      )}
+        <Routes>
+          <Route path="/" element={<Search />} />
+          <Route path="/watchlist" element={<Watchlist />} />
+          <Route path="/portfolio" element={<Portfolio />} />
+        </Routes>
+      </BrowserRouter>
       {/* <FooterBar /> */}
     </div>
   );

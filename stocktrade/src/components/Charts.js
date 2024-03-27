@@ -3,9 +3,6 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 
 require("highcharts/modules/stock")(Highcharts);
-// require("highcharts/indicators/indicators")(Highcharts);
-// require("highcharts/indicators/volume-by-price")(Highcharts); // Import VBP
-// require("highcharts/indicators/sma")(Highcharts); // Import SMA if you haven't
 require("highcharts/indicators/indicators-all")(Highcharts);
 
 function Charts({ historicalData }) {
