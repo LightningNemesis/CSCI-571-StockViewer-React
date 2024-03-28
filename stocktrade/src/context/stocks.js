@@ -160,7 +160,7 @@ function Provider({ children }) {
         newStock,
       });
 
-      console.log(response.data);
+      //   console.log(response.data);
 
       newPortfolio.push(newStock);
     } else {
@@ -183,7 +183,7 @@ function Provider({ children }) {
         `http://localhost:3001/portfolio/${updatedStock.id}`,
         updatedStock
       );
-      console.log(response.data);
+      //   console.log(response.data);
 
       newPortfolio[stockIndex] = updatedStock;
     }

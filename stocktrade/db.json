@@ -12,9 +12,9 @@
     {
       "symbol": "AAPL",
       "name": "Apple Inc",
-      "quantity": 8,
+      "quantity": 9,
       "avgCost": 184.18,
-      "totalCost": 1473.44,
+      "totalCost": 1657.6200000000001,
       "change": -0.06,
       "currentPrice": 184.18,
       "marketValue": 552.53,
@@ -23,9 +23,9 @@
     {
       "symbol": "AAPL",
       "name": "Apple Inc",
-      "quantity": 13,
+      "quantity": 19,
       "avgCost": 184.18,
-      "totalCost": 2394.34,
+      "totalCost": 3499.42,
       "change": -0.06,
       "currentPrice": 184.18,
       "marketValue": 552.53,

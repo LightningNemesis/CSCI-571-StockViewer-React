@@ -76,12 +76,14 @@ const RenderedStocks = ({ stocks, buyStocks }) => {
         <Button
           variant="primary"
           className="me-2"
-          onClick={() => buyStocks(stock)}
+          onClick={() => buyStocks(stock, 0)}
         >
           Buy
         </Button>
 
-        <Button variant="danger">Sell</Button>
+        <Button variant="danger" onClick={() => buyStocks(stock, 1)}>
+          Sell
+        </Button>
       </Card.Footer>
     </Card>
   ));
@@ -94,10 +96,14 @@ function Portfolio() {
   const [show, setShow] = useState(false);
   const [quantity, setQuantity] = useState("0");
   const [stockSelected, setStockSelected] = useState({});
+  const [modalState, setModalState] = useState(0);
 
   const handleClose = () => setShow(false);
   const openModal = () => setShow(true);
-  const setModalData = (stock) => {
+  const setModalData = (stock, mode) => {
+    if (mode === 0) setModalState(0); // buy mode
+    else setModalState(1); // sell mode
+
     setStockSelected(stock);
     // setQuantity(stock.quantity);
     openModal();
@@ -105,10 +111,23 @@ function Portfolio() {
 
   const handleBuy = () => {
     buyStocks(stockSelected, quantity);
+    handleClose();
+  };
+
+  const handleSell = () => {
+    console.log("Selling", stockSelected, quantity);
+    handleClose();
   };
 
   const numericQuantity = quantity === "" ? 0 : parseInt(quantity, 10);
   const canBuy = numericQuantity * stockSelected.currentPrice <= wallet;
+  const minBuy =
+    numericQuantity * stockSelected.currentPrice <= wallet &&
+    numericQuantity > 0;
+
+  const canSell = numericQuantity <= stockSelected.quantity;
+  const minSell =
+    numericQuantity <= stockSelected.quantity && numericQuantity > 0;
 
   useEffect(() => {
     fetchWallet();
@@ -162,10 +181,12 @@ function Portfolio() {
                 type="number"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                isInvalid={!canBuy}
+                isInvalid={modalState === 0 ? !canBuy : !canSell}
               />
               <Form.Control.Feedback type="invalid">
-                Not enough money in wallet!
+                {modalState === 0
+                  ? "Not enough money in wallet!"
+                  : "You cannot sell the stocks you don't have!"}
               </Form.Control.Feedback>
             </Form.Group>
             <Form.Label>
@@ -174,11 +195,12 @@ function Portfolio() {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={handleBuy} disabled={!canBuy}>
-            Buy
+          <Button
+            variant="primary"
+            onClick={modalState === 0 ? handleBuy : handleSell}
+            disabled={modalState === 0 ? !minBuy : !minSell}
+          >
+            {modalState === 0 ? "Buy" : "Sell"}
           </Button>
         </Modal.Footer>
       </Modal>
