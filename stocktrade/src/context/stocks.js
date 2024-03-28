@@ -191,18 +191,74 @@ function Provider({ children }) {
     setPortfolio(newPortfolio);
   };
 
-  //   Editing Portfolio: needs an id
-  const sellStocks = async (title) => {
-    // const response = await axios.put(`http://localhost:3001/books/${id}`, {
-    //   title: newTitle,
-    // });
-    // const updatedBooks = books.map((book) => {
-    //   if (book.id === id) {
-    //     return { ...book, ...response.data };
-    //   }
-    //   return book;
-    // });
-    // setBooks(updatedBooks);
+  //   //   Editing Portfolio: needs an id
+  //   const sellStocks = async (title) => {
+  //     // const response = await axios.put(`http://localhost:3001/books/${id}`, {
+  //     //   title: newTitle,
+  //     // });
+  //     // const updatedBooks = books.map((book) => {
+  //     //   if (book.id === id) {
+  //     //     return { ...book, ...response.data };
+  //     //   }
+  //     //   return book;
+  //     // });
+  //     // setBooks(updatedBooks);
+  //   };
+
+  const sellStocks = async (stockSelected, quantity) => {
+    const numericQuantity = quantity === "" ? 0 : parseInt(quantity, 10);
+
+    let newPortfolio = [...portfolio];
+
+    const stockIndex = newPortfolio.findIndex(
+      (stock) => stockSelected.id === stock.id
+    );
+
+    if (stockIndex !== -1) {
+      // Stock is in the portfolio
+      const existingStock = newPortfolio[stockIndex];
+      const newQuantity =
+        parseInt(existingStock.quantity, 10) - numericQuantity;
+
+      if (newQuantity < 0) {
+        console.error("Cannot sell more stocks than you own");
+        // Handle error: trying to sell more than owned
+        return;
+      }
+
+      if (newQuantity === 0) {
+        // If all stocks are sold, remove it from the portfolio
+        newPortfolio.splice(stockIndex, 1);
+        await axios.delete(
+          `http://localhost:3001/portfolio/${existingStock.id}`
+        );
+      } else {
+        // Update the quantity of the stock in the portfolio
+        const newTotalCost = newQuantity * existingStock.avgCost; // Or however you want to handle total cost reduction
+
+        const updatedStock = {
+          ...existingStock,
+          quantity: newQuantity,
+          totalCost: newTotalCost,
+          // avgCost stays the same unless you have a specific reason to change it
+        };
+
+        console.log("updatedStock", updatedStock);
+
+        await axios.put(
+          `http://localhost:3001/portfolio/${existingStock.id}`,
+          updatedStock
+        );
+
+        newPortfolio[stockIndex] = updatedStock;
+      }
+    } else {
+      console.error("Stock not found in portfolio");
+      // Handle error: stock not found in portfolio
+      return;
+    }
+
+    setPortfolio(newPortfolio);
   };
 
   const valuesToShare = {

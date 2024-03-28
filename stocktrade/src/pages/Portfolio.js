@@ -90,8 +90,14 @@ const RenderedStocks = ({ stocks, buyStocks }) => {
 };
 
 function Portfolio() {
-  const { wallet, portfolio, fetchWallet, fetchPortfolio, buyStocks } =
-    useContext(StocksContext);
+  const {
+    wallet,
+    portfolio,
+    fetchWallet,
+    fetchPortfolio,
+    buyStocks,
+    sellStocks,
+  } = useContext(StocksContext);
 
   const [show, setShow] = useState(false);
   const [quantity, setQuantity] = useState("0");
@@ -115,7 +121,8 @@ function Portfolio() {
   };
 
   const handleSell = () => {
-    console.log("Selling", stockSelected, quantity);
+    // console.log("Selling", stockSelected, quantity);
+    sellStocks(stockSelected, quantity);
     handleClose();
   };
 
