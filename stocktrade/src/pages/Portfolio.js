@@ -1,9 +1,18 @@
-import { useContext, useEffect } from "react";
-import { Container, Card, Button, Row, Col, ListGroup } from "react-bootstrap";
+import { useContext, useEffect, useState } from "react";
+import {
+  Container,
+  Card,
+  Button,
+  Row,
+  Col,
+  ListGroup,
+  Modal,
+  Form,
+} from "react-bootstrap";
 
 import StocksContext from "../context/stocks";
 
-const RenderedStocks = ({ stocks }) => {
+const RenderedStocks = ({ stocks, buyStocks }) => {
   return stocks.map((stock, index) => (
     <Card key={index} className="mb-3">
       <Card.Header as="h5">
@@ -64,7 +73,11 @@ const RenderedStocks = ({ stocks }) => {
         </Row>
       </Card.Body>
       <Card.Footer as="h5" style={{ margin: 0 }}>
-        <Button variant="primary" className="me-2">
+        <Button
+          variant="primary"
+          className="me-2"
+          onClick={() => buyStocks(stock)}
+        >
           Buy
         </Button>
 
@@ -75,8 +88,27 @@ const RenderedStocks = ({ stocks }) => {
 };
 
 function Portfolio() {
-  const { wallet, portfolio, fetchWallet, fetchPortfolio } =
+  const { wallet, portfolio, fetchWallet, fetchPortfolio, buyStocks } =
     useContext(StocksContext);
+
+  const [show, setShow] = useState(false);
+  const [quantity, setQuantity] = useState("0");
+  const [stockSelected, setStockSelected] = useState({});
+
+  const handleClose = () => setShow(false);
+  const openModal = () => setShow(true);
+  const setModalData = (stock) => {
+    setStockSelected(stock);
+    // setQuantity(stock.quantity);
+    openModal();
+  };
+
+  const handleBuy = () => {
+    buyStocks(stockSelected, quantity);
+  };
+
+  const numericQuantity = quantity === "" ? 0 : parseInt(quantity, 10);
+  const canBuy = numericQuantity * stockSelected.currentPrice <= wallet;
 
   useEffect(() => {
     fetchWallet();
@@ -113,7 +145,43 @@ function Portfolio() {
       <h1>My Portfolio</h1>
       <p>Money in Wallet: ${wallet}</p>
 
-      <RenderedStocks stocks={portfolio} />
+      <RenderedStocks stocks={portfolio} buyStocks={setModalData} />
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>NVDA</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group controlId="formBasicEmail">
+              <Form.Label>
+                Current Price: {stockSelected.currentPrice}
+              </Form.Label>
+              <Form.Label>Money in Wallet: ${wallet}</Form.Label>
+              <Form.Control
+                type="number"
+                value={quantity}
+                onChange={(e) => setQuantity(e.target.value)}
+                isInvalid={!canBuy}
+              />
+              <Form.Control.Feedback type="invalid">
+                Not enough money in wallet!
+              </Form.Control.Feedback>
+            </Form.Group>
+            <Form.Label>
+              Total: {numericQuantity * stockSelected.currentPrice}
+            </Form.Label>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleBuy} disabled={!canBuy}>
+            Buy
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }

@@ -122,23 +122,73 @@ function Provider({ children }) {
   const fetchWallet = useCallback(async (query) => {
     const response = await axios.get("http://localhost:3001/wallet");
 
-    console.log(response.data.amount);
+    console.log("fetchWallet", response.data.amount);
     setWallet(parseInt(response.data.amount));
   }, []);
 
   // Get all stocks stored in DB ~ part of the Portfolio
   const fetchPortfolio = useCallback(async () => {
     const response = await axios.get("http://localhost:3001/portfolio");
-    console.log(response.data);
+    console.log("fetchPortfolio", response.data);
     setPortfolio(response.data);
   }, []);
 
-  // Adding stocks to the watchlist
-  const buyStocks = async (title) => {
-    // const response = await axios.post("http://localhost:3001/books/", {
-    //   title,
-    // });
-    // setBooks([...books, response.data]);
+  // Buying Stocks: needs a stock and quantity
+  const buyStocks = async (stockSelected, quantity) => {
+    const numericQuantity = quantity === "" ? 0 : parseInt(quantity, 10);
+    const purchaseCost = numericQuantity * stockSelected.currentPrice;
+
+    let newPortfolio = [...portfolio];
+
+    const stockIndex = newPortfolio.findIndex(
+      //   (stock) => stockSelected.symbol === stock.symbol
+      (stock) => stockSelected.id === stock.id
+    );
+
+    if (stockIndex === -1) {
+      // Add the stock to the portfolio
+      const newStock = {
+        ...stockSelected,
+        quantity: numericQuantity,
+        avgCost: stockSelected.currentPrice,
+        totalCost: purchaseCost,
+      };
+
+      console.log("newStock", newStock);
+
+      const response = await axios.post("http://localhost:3001/portfolio", {
+        newStock,
+      });
+
+      console.log(response.data);
+
+      newPortfolio.push(newStock);
+    } else {
+      // Update the stock in the portfolio
+      const existingStock = newPortfolio[stockIndex];
+      const newQuantity =
+        parseInt(existingStock.quantity, 10) + numericQuantity;
+      const newAvgCost = (existingStock.totalCost + purchaseCost) / newQuantity;
+      const newTotalCost = newQuantity * stockSelected.currentPrice;
+
+      const updatedStock = {
+        ...existingStock,
+        quantity: newQuantity,
+        avgCost: newAvgCost,
+        totalCost: newTotalCost,
+      };
+      console.log("updatedStock", updatedStock);
+
+      const response = await axios.put(
+        `http://localhost:3001/portfolio/${updatedStock.id}`,
+        updatedStock
+      );
+      console.log(response.data);
+
+      newPortfolio[stockIndex] = updatedStock;
+    }
+
+    setPortfolio(newPortfolio);
   };
 
   //   Editing Portfolio: needs an id
